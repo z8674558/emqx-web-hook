@@ -70,8 +70,6 @@
             }
         }).
 
--define(JSON_REQ(URL, HEADERS, BODY), {(URL), (HEADERS), "application/json", (BODY)}).
-
 -resource_type(#{name => ?RESOURCE_TYPE_WEBHOOK,
                  create => on_resource_create,
                  status => on_get_resource_status,
@@ -157,15 +155,22 @@ format_msg(Tokens, Data) ->
 %% Internal functions
 %%------------------------------------------------------------------------------
 
+create_req(get, Url, _, _) ->
+  {(Url)};
+
+create_req(_, Url, Headers, Body) ->
+  {(Url), (Headers), "application/json", (Body)}.
+
 http_request(Url, Headers, Method, Params) ->
     logger:debug("[WebHook Action] ~s to ~s, headers: ~p, body: ~p", [Method, Url, Headers, Params]),
-    case do_http_request(Method, ?JSON_REQ(Method, Url, Headers, Params),
+    case do_http_request(Method, create_req(Method, Url, Headers, Params),
                          [{timeout, 5000}], [], 0) of
         {ok, _} -> ok;
         {error, Reason} ->
             logger:error("[WebHook Action] HTTP request error: ~p", [Reason]),
             error({http_request_error, Reason})
     end.
+
 
 do_http_request(Method, Req, HTTPOpts, Opts, Times) ->
     %% Resend request, when TCP closed by remotely
