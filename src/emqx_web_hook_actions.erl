@@ -155,8 +155,8 @@ format_msg(Tokens, Data) ->
 %% Internal functions
 %%------------------------------------------------------------------------------
 
-create_req(get, Url, _, _) ->
-  {(Url)};
+create_req(get, Url, Headers, _) ->
+  {(Url), (Headers)};
 
 create_req(_, Url, Headers, Body) ->
   {(Url), (Headers), "application/json", (Body)}.
