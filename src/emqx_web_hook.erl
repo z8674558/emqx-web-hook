@@ -319,6 +319,18 @@ send_http_request(Params) ->
             ?LOG(error, "HTTP request error: ~p", [Reason]), ok
     end.
 
+request_(Method, Req, HTTPOpts, Opts, Times) ->
+    %% Resend request, when TCP closed by remotely
+    NHttpOpts = case application:get_env(?APP, ssl, false) of
+        true -> [{ssl, application:get_env(?APP, ssloptions, [])} | HTTPOpts];
+        _ -> HTTPOpts
+    end,
+    case httpc:request("localhost:3000") of
+        {error, socket_closed_remotely} when Times < 3 ->
+            timer:sleep(trunc(math:pow(10, Times))),
+            request_(Method, Req, HTTPOpts, Opts, Times+1);
+        Other -> Other
+    end.
 
 parse_rule(Rules) ->
     parse_rule(Rules, []).
