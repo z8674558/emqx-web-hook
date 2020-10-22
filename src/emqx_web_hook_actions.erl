@@ -37,7 +37,7 @@
                          description => #{en => <<"Request Header">>,
                                           zh => <<"请求头"/utf8>>}},
             method => #{type => string,
-                        enum => [<<"PUT">>,<<"POST">>,<<GET>>],
+                        enum => [<<"PUT">>,<<"POST">>,<<"GET">>],
                         default => <<"POST">>,
                         title => #{en => <<"Request Method">>,
                                    zh => <<"请求方法"/utf8>>},
