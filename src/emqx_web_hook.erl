@@ -325,7 +325,7 @@ request_(Method, Req, HTTPOpts, Opts, Times) ->
         true -> [{ssl, application:get_env(?APP, ssloptions, [])} | HTTPOpts];
         _ -> HTTPOpts
     end,
-    case httpc:request("localhost:3000") of
+    case httpc:request(Method, Req, NHttpOpts, Opts) of
         {error, socket_closed_remotely} when Times < 3 ->
             timer:sleep(trunc(math:pow(10, Times))),
             request_(Method, Req, HTTPOpts, Opts, Times+1);

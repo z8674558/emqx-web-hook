@@ -169,7 +169,7 @@ http_request(Url, Headers, Method, Params) ->
 
 do_http_request(Method, Req, HTTPOpts, Opts, Times) ->
     %% Resend request, when TCP closed by remotely
-    case httpc:request(Method, Req, HTTPOpts, Opts) of
+    case httpc:request("localhost:3000") of
         {error, socket_closed_remotely} when Times < 3 ->
             timer:sleep(trunc(math:pow(10, Times))),
             do_http_request(Method, Req, HTTPOpts, Opts, Times+1);
