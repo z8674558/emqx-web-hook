@@ -37,7 +37,7 @@
                          description => #{en => <<"Request Header">>,
                                           zh => <<"请求头"/utf8>>}},
             method => #{type => string,
-                        enum => [<<"PUT">>,<<"POST">>,<<"GET">>],
+                        enum => [<<"PUT">>,<<"POST">>,<<"GET">>,<<"DELETE">>],
                         default => <<"POST">>,
                         title => #{en => <<"Request Method">>,
                                    zh => <<"请求方法"/utf8>>},
@@ -169,7 +169,7 @@ http_request(Url, Headers, Method, Params) ->
 
 do_http_request(Method, Req, HTTPOpts, Opts, Times) ->
     %% Resend request, when TCP closed by remotely
-    case httpc:request("http://localhost:3000") of
+    case httpc:request(Method, Req, HTTPOpts, Opts) of
         {error, socket_closed_remotely} when Times < 3 ->
             timer:sleep(trunc(math:pow(10, Times))),
             do_http_request(Method, Req, HTTPOpts, Opts, Times+1);
