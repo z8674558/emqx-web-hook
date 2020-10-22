@@ -70,8 +70,7 @@
             }
         }).
 
--define(REQ(get, URL, HEADERS, BODY), {(URL)}).
--define(JSON_REQ(_, URL, HEADERS, BODY), {(URL), (HEADERS), "application/json", (BODY)}).
+-define(JSON_REQ(URL, HEADERS, BODY), {(URL), (HEADERS), "application/json", (BODY)}).
 
 -resource_type(#{name => ?RESOURCE_TYPE_WEBHOOK,
                  create => on_resource_create,
