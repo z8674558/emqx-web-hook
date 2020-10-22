@@ -70,7 +70,8 @@
             }
         }).
 
--define(JSON_REQ(URL, HEADERS, BODY), {(URL), (HEADERS), "application/json", (BODY)}).
+-define(JSON_REQ(get, URL, HEADERS, BODY), {}).
+-define(JSON_REQ(_, URL, HEADERS, BODY), {(URL), (HEADERS), "application/json", (BODY)}).
 
 -resource_type(#{name => ?RESOURCE_TYPE_WEBHOOK,
                  create => on_resource_create,
@@ -159,7 +160,7 @@ format_msg(Tokens, Data) ->
 
 http_request(Url, Headers, Method, Params) ->
     logger:debug("[WebHook Action] ~s to ~s, headers: ~p, body: ~p", [Method, Url, Headers, Params]),
-    case do_http_request(Method, ?JSON_REQ(Url, Headers, Params),
+    case do_http_request(Method, ?JSON_REQ(Method, Url, Headers, Params),
                          [{timeout, 5000}], [], 0) of
         {ok, _} -> ok;
         {error, Reason} ->
