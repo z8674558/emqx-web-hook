@@ -187,7 +187,7 @@ parse_action_params(Params = #{<<"url">> := Url}) ->
     end.
 
 method(GET) when GET == <<"GET">>; GET == <<"get">> -> get;
-method(POST) when POST == <<"POST">>; POST == <<"post">> -> get;
+method(POST) when POST == <<"POST">>; POST == <<"post">> -> post;
 method(PUT) when PUT == <<"PUT">>; PUT == <<"put">> -> put;
 method(DEL) when DEL == <<"DELETE">>; DEL == <<"delete">> -> delete.
 
