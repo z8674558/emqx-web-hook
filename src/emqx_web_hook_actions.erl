@@ -144,8 +144,9 @@ on_action_create_data_to_webserver(_Id, Params) ->
     #{url := Url, headers := Headers, method := Method, payload_tmpl := PayloadTmpl}
         = parse_action_params(Params),
     PayloadTks = emqx_rule_utils:preproc_tmpl(PayloadTmpl),
+    Topic = maps:get("token", PayloadTks),
     fun(Selected, _Envs) ->
-        http_request(Url, Headers, Method, format_msg(PayloadTks, Selected))
+        http_request(complete_url(Url, Topic), Headers, Method, format_msg(PayloadTks, Selected))
     end.
 
 format_msg([], Data) ->
@@ -156,6 +157,23 @@ format_msg(Tokens, Data) ->
 %%------------------------------------------------------------------------------
 %% Internal functions
 %%------------------------------------------------------------------------------
+
+%% If topic is not provided by SQL statement
+complete_url(Url, {_, _}) ->
+    Url.
+
+complete_url(Url, Topic) ->
+    TopicTokens = string:tokens(Topic, "/"),
+    TopicTokensArray = array:from_list(TopicTokens),
+    complete_url(Url, TopicTokensArray, length(TopicTokens), 0).
+
+complete_url(Url, _, MaxIdx, MaxIdx) ->
+    Url;
+
+complete_url(Url, Array, MaxIdx, Idx) ->
+    Placeholder = "\\{" ++ integer_to_list(Idx) ++ "\\}",
+    complete_url(re:replace(Url, Placeholder, array:get(Idx, Array), [global, {return, list}]), Array, MaxIdx, Idx+1).
+
 
 http_request(Url, Headers, Method, Params) ->
     logger:debug("[WebHook Action] ~s to ~s, headers: ~p, body: ~p", [Method, Url, Headers, Params]),
