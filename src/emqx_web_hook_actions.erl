@@ -150,7 +150,7 @@ on_action_create_data_to_webserver(_Id, Params) ->
     #{url := Url, additional_path := AdditionalPath, headers := Headers, method := Method, payload_tmpl := PayloadTmpl}
         = parse_action_params(Params),
     AdditionalPathTks = emqx_rule_utils:preproc_tmpl(AdditionalPath),
-    logger:debug("[WebHook Action] AdditionalPathTks is ~p", [AdditionalPathTks]),
+    logger:warning("[WebHook Action] AdditionalPathTks is ~p", [AdditionalPathTks]),
     PayloadTks = emqx_rule_utils:preproc_tmpl(PayloadTmpl),
     fun(Selected, _Envs) ->
         http_request(Url, Headers, Method, format_msg(PayloadTks, Selected))
