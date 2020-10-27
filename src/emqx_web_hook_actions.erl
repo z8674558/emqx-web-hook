@@ -48,7 +48,8 @@
                       default => <<>>,
                       title => #{en => <<"Path">>,
                                  zh => <<"Path">>},
-                      description => #{en => <<"A path component. This value will be concatenated with Request URL.">>}}
+                      description => #{en => <<"A path component. This value will be concatenated with Request URL.">>,
+                                       ja => <<"テスト"/utf8>>}}
         }).
 
 -define(ACTION_PARAM_RESOURCE, #{
@@ -150,7 +151,7 @@ on_action_create_data_to_webserver(_Id, Params) ->
     PayloadTks = emqx_rule_utils:preproc_tmpl(PayloadTmpl),
     PathTks = emqx_rule_utils:preproc_tmpl(Path),
     fun(Selected, _Envs) ->
-        FullUrl = Url ++ emqx_rule_utils(PathTks, Selected),
+        FullUrl = Url ++ emqx_rule_utils:proc_tmpl(PathTks, Selected),
         http_request(FullUrl, Headers, Method, format_msg(PayloadTks, Selected))
     end.
 
