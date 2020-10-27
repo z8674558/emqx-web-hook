@@ -154,6 +154,8 @@ on_action_create_data_to_webserver(_Id, Params) ->
     logger:warning("[WebHook Action] AdditionalPathTks is ~p", [AdditionalPathTks]),
     PayloadTks = emqx_rule_utils:preproc_tmpl(PayloadTmpl),
     fun(Selected, _Envs) ->
+        CompletePath = format_msg(AdditionalPathTks, Selected),
+        logger:warning("[WebHook Action] Complete Path is ~p", [CompletePath]),
         http_request(Url, Headers, Method, format_msg(PayloadTks, Selected))
     end.
 
