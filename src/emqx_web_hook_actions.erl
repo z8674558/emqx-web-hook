@@ -188,6 +188,7 @@ do_http_request(Method, Req, HTTPOpts, Opts, Times) ->
 parse_action_params(Params = #{<<"url">> := Url}) ->
     try
         #{url => str(Url),
+          additional_path => headers(maps:get(<<"additional_path">>, Params, <<"">>)),
           headers => headers(maps:get(<<"headers">>, Params, undefined)),
           method => method(maps:get(<<"method">>, Params, <<"POST">>)),
           payload_tmpl => maps:get(<<"payload_tmpl">>, Params, <<>>)}
