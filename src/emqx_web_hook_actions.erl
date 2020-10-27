@@ -194,7 +194,7 @@ parse_action_params(Params = #{<<"url">> := Url}) ->
           headers => headers(maps:get(<<"headers">>, Params, undefined)),
           method => method(maps:get(<<"method">>, Params, <<"POST">>)),
           payload_tmpl => maps:get(<<"payload_tmpl">>, Params, <<>>),
-          path => maps:get(<<"path">>, Params, <<>>)}
+          path => maps:get(<<"path">>, Params, <<"">>)}
     catch _:_ ->
         throw({invalid_params, Params})
     end.
