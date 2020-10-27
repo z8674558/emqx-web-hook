@@ -48,8 +48,7 @@
                       default => <<>>,
                       title => #{en => <<"Path">>,
                                  zh => <<"Path">>},
-                      description => #{en => <<"A path component. This value will be concatenated with Request URL.">>,
-                                       ja => <<"テスト"/utf8>>}}
+                      description => #{en => <<"A path component. This value will be concatenated with Request URL.">>}}
         }).
 
 -define(ACTION_PARAM_RESOURCE, #{
