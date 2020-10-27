@@ -42,7 +42,13 @@
                         title => #{en => <<"Request Method">>,
                                    zh => <<"请求方法"/utf8>>},
                         description => #{en => <<"Request Method. Note that the payload_template will be discarded in case of GET method">>,
-                                         zh => <<"请求方法。注意：当请求方法为 GET 的时候，payload_template 参数会被忽略"/utf8>>}}
+                                         zh => <<"请求方法。注意：当请求方法为 GET 的时候，payload_template 参数会被忽略"/utf8>>}},
+            path => #{type => string,
+                      required => false,
+                      default => <<>>,
+                      title => #{en => <<"Path">>,
+                                 zh => <<"Path">>},
+                      description => #{en => <<"A path component. This value will be concatenated with Request URL.">>}}
         }).
 
 -define(ACTION_PARAM_RESOURCE, #{
@@ -139,11 +145,13 @@ on_resource_destroy(_ResId, _Params) ->
 %% An action that forwards publish messages to a remote web server.
 -spec(on_action_create_data_to_webserver(Id::binary(), #{url() := string()}) -> action_fun()).
 on_action_create_data_to_webserver(_Id, Params) ->
-    #{url := Url, headers := Headers, method := Method, payload_tmpl := PayloadTmpl}
+    #{url := Url, headers := Headers, method := Method, payload_tmpl := PayloadTmpl, path := Path}
         = parse_action_params(Params),
     PayloadTks = emqx_rule_utils:preproc_tmpl(PayloadTmpl),
+    PathTks = emqx_rule_utils:preproc_tmpl(Path),
     fun(Selected, _Envs) ->
-        http_request(Url, Headers, Method, format_msg(PayloadTks, Selected))
+        FullUrl = Url ++ format_msg(PathTks, Selected),
+        http_request(FullUrl, Headers, Method, format_msg(PayloadTks, Selected))
     end.
 
 format_msg([], Data) ->
@@ -185,7 +193,8 @@ parse_action_params(Params = #{<<"url">> := Url}) ->
         #{url => str(Url),
           headers => headers(maps:get(<<"headers">>, Params, undefined)),
           method => method(maps:get(<<"method">>, Params, <<"POST">>)),
-          payload_tmpl => maps:get(<<"payload_tmpl">>, Params, <<>>)}
+          payload_tmpl => maps:get(<<"payload_tmpl">>, Params, <<>>),
+          path => maps:get(<<"path">>, Params, <<>>)}
     catch _:_ ->
         throw({invalid_params, Params})
     end.
