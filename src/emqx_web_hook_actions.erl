@@ -150,7 +150,7 @@ on_action_create_data_to_webserver(_Id, Params) ->
     PayloadTks = emqx_rule_utils:preproc_tmpl(PayloadTmpl),
     PathTks = emqx_rule_utils:preproc_tmpl(Path),
     fun(Selected, _Envs) ->
-        FullUrl = Url ++ format_msg(PathTks, Selected),
+        FullUrl = Url ++ emqx_rule_utils(PathTks, Selected),
         http_request(FullUrl, Headers, Method, format_msg(PayloadTks, Selected))
     end.
 
@@ -194,7 +194,7 @@ parse_action_params(Params = #{<<"url">> := Url}) ->
           headers => headers(maps:get(<<"headers">>, Params, undefined)),
           method => method(maps:get(<<"method">>, Params, <<"POST">>)),
           payload_tmpl => maps:get(<<"payload_tmpl">>, Params, <<>>),
-          path => maps:get(<<"path">>, Params, <<"">>)}
+          path => maps:get(<<"path">>, Params, <<>>)}
     catch _:_ ->
         throw({invalid_params, Params})
     end.
