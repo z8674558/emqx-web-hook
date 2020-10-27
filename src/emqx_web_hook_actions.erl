@@ -31,6 +31,7 @@
                                       zh => <<"请求 URL"/utf8>>}},
             additional_path => #{type => string,
                                  required => false,
+                                 default => <<"">>,
                                  title => #{en => <<"Additional Path">>,
                                             zh => <<"tbd">>},
                                  description => #{en => <<"Request URL">>,
