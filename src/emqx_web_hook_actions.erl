@@ -29,6 +29,10 @@
                                 zh => <<"请求 URL"/utf8>>},
                      description => #{en => <<"Request URL">>,
                                       zh => <<"请求 URL"/utf8>>}},
+            additional_path => #{type => string,
+                                 required => false,
+                                 title => #{en => <<"Additional Path">>,
+                                            zh => <<"tbd">>}},
             headers => #{type => object,
                          schema => #{},
                          default => #{},
@@ -141,8 +145,10 @@ on_resource_destroy(_ResId, _Params) ->
 %% An action that forwards publish messages to a remote web server.
 -spec(on_action_create_data_to_webserver(Id::binary(), #{url() := string()}) -> action_fun()).
 on_action_create_data_to_webserver(_Id, Params) ->
-    #{url := Url, headers := Headers, method := Method, payload_tmpl := PayloadTmpl}
+    #{url := Url, additional_path := AdditionalPath, headers := Headers, method := Method, payload_tmpl := PayloadTmpl}
         = parse_action_params(Params),
+    AdditionalPathTks = emqx_rule_utils:preproc_tmpl(AdditionalPath),
+    logger:debug("[WebHook Action] AdditionalPathTks is ~p", [AdditionalPathTks]),
     PayloadTks = emqx_rule_utils:preproc_tmpl(PayloadTmpl),
     fun(Selected, _Envs) ->
         http_request(Url, Headers, Method, format_msg(PayloadTks, Selected))
